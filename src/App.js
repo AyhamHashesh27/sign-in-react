@@ -1,27 +1,36 @@
-import './App.css';
-import Login from './components/Login/Login';
-import {useState} from 'react';
-import Home from './components/Home/Home';
-import MainHeader from './components/MainHeader/MainHeader';
+import "./App.css";
+import Login from "./components/Login/Login";
+import { useState, useEffect } from "react";
+import Home from "./components/Home/Home";
+import MainHeader from "./components/MainHeader/MainHeader";
 
 function App() {
-
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // To make it executed when the component re-evaluated (Avoid infinite loop)
+  useEffect(() => {
+    const storedUserLoggedInInformation = localStorage.getItem("isLoggedIn");
+    if (storedUserLoggedInInformation === "1") {
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   const loginHandler = (email, password) => {
     // We should of course check email and password
     // But it's just a dummy/ demo anyways
+    // Key: Value pair (Names are up to us) - localStorage is a browser global variable
+    localStorage.setItem("isLoggedIn", "1");
     setIsLoggedIn(true);
   };
 
   const logoutHandler = () => {
+    localStorage.removeItem("isLoggedIn");
     setIsLoggedIn(false);
   };
 
   return (
     <>
-    <MainHeader isAuthenticated={isLoggedIn} onLogout={logoutHandler} />
-    <main>
+      <MainHeader isAuthenticated={isLoggedIn} onLogout={logoutHandler} />
+      <main>
         {!isLoggedIn && <Login onLogin={loginHandler} />}
         {isLoggedIn && <Home onLogout={logoutHandler} />}
       </main>
